@@ -1,9 +1,10 @@
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:http/http.dart';
 
 main() async {
-  final httpClient = HttpAdapter();
+  final httpClient = DioAdapter();
   final repo = UserApiRepository(httpClient: httpClient);
   await repo.loadCurrentUser();
 }
@@ -32,5 +33,15 @@ final class HttpAdapter implements HttpGetClient {
   Future<dynamic> get({required String url}) async {
     final response = await client.get(Uri.parse(url));
     return jsonDecode(response.body);
+  }
+}
+
+final class DioAdapter implements HttpGetClient {
+  final client = Dio();
+
+  @override
+  Future<dynamic> get({required String url}) async {
+    final response = await client.get(url);
+    return response.data;
   }
 }
