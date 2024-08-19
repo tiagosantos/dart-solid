@@ -3,11 +3,18 @@ import 'dart:convert';
 import 'package:http/http.dart';
 
 main() async {
-  final repo = UserApiRepository();
+  final httpClient = HttpGetClient();
+  final repo = UserApiRepository(httpClient: httpClient);
   await repo.loadCurrentUser();
 }
 
 final class UserApiRepository {
+  final HttpGetClient httpClient;
+
+  const UserApiRepository({
+    required this.httpClient,
+  });
+
   Future<void> loadCurrentUser() async {
     final httpClient = HttpGetClient();
     final json = await httpClient.get(url: "http://localhost:4000/users");
