@@ -5,4 +5,4 @@ app.get("/users", (req, res) => {
     name: "Carlos Tiago",
   });
 });
-app.listen(3000, () => console.log("Running"));
+app.listen(4000, () => console.log("Running"));
