@@ -9,9 +9,15 @@ main() async {
 
 final class UserApiRepository {
   Future<void> loadCurrentUser() async {
-    final response =
-        await Client().get(Uri.parse("http://localhost:4000/users"));
-    print(response.statusCode);
-    print(jsonDecode(response.body));
+    final httpClient = HttpGetClient();
+    final json = await httpClient.get(url: "http://localhost:4000/users");
+    print(json);
+  }
+}
+
+final class HttpGetClient {
+  Future<dynamic> get({required String url}) async {
+    final response = await Client().get(Uri.parse(url));
+    return jsonDecode(response.body);
   }
 }
