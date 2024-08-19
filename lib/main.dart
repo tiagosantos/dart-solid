@@ -8,7 +8,10 @@ main() async {
   await repo.loadCurrentUser();
 }
 
-HttpGetClient makeHttpClientGet() => DioAdapter(logger: ConsoleLoggerAdapter());
+HttpGetClient makeHttpClientGet() => HttpGetClientLogDecorator(
+      logger: ConsoleLoggerAdapter(),
+      decoratee: HttpAdapter(),
+    );
 
 final class UserApiRepository {
   final HttpGetClient httpClient;
@@ -39,38 +42,48 @@ abstract interface class HttpGetClient {
   Future<dynamic> get({required String url});
 }
 
-final class HttpAdapter implements HttpGetClient {
-  final client = Client();
+final class HttpGetClientLogDecorator implements HttpGetClient {
   final Logger logger;
+  final HttpGetClient decoratee;
 
-  HttpAdapter({
+  HttpGetClientLogDecorator({
     required this.logger,
+    required this.decoratee,
   });
 
   @override
   Future<dynamic> get({required String url}) async {
-    final response = await client.get(Uri.parse(url));
-    final json = jsonDecode(response.body);
-    await logger.log(key: 'http_request', value: json);
+    final response = await decoratee.get(url: url);
+    await logger.log(
+      key: 'http_request',
+      value: {
+        url: url,
+      },
+    );
+    await logger.log(
+      key: 'http_request',
+      value: response,
+    );
+    return response;
+  }
+}
 
-    return json;
+final class HttpAdapter implements HttpGetClient {
+  final client = Client();
+
+  @override
+  Future<dynamic> get({required String url}) async {
+    final response = await client.get(Uri.parse(url));
+    return jsonDecode(response.body);
   }
 }
 
 final class DioAdapter implements HttpGetClient {
   final client = Dio();
-  final Logger logger;
-
-  DioAdapter({
-    required this.logger,
-  });
 
   @override
   Future<dynamic> get({required String url}) async {
     final response = await client.get(url);
-    final json = response.data;
-    await logger.log(key: 'http_request', value: json);
-
-    return json;
+    return response.data;
   }
 }
