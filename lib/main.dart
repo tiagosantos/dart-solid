@@ -4,7 +4,9 @@ import 'package:dio/dio.dart';
 import 'package:http/http.dart';
 
 main() async {
-  final repo = UserApiRepository(httpClient: makeHttpClientGet());
+  final logger = Logger();
+  final repo =
+      UserApiRepository(httpClient: makeHttpClientGet(), logger: logger);
   await repo.loadCurrentUser();
 }
 
@@ -12,14 +14,16 @@ HttpGetClient makeHttpClientGet() => DioAdapter();
 
 final class UserApiRepository {
   final HttpGetClient httpClient;
+  final Logger logger;
 
   const UserApiRepository({
     required this.httpClient,
+    required this.logger,
   });
 
   Future<void> loadCurrentUser() async {
     final json = await httpClient.get(url: "http://localhost:4000/users");
-    Logger().log(key: 'loadCurrentUser', value: json);
+    logger.log(key: 'loadCurrentUser', value: json);
   }
 }
 
