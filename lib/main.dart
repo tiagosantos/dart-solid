@@ -4,7 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:http/http.dart';
 
 main() async {
-  final logger = Logger();
+  final logger = ConsoleLoggerAdapter();
   final repo =
       UserApiRepository(httpClient: makeHttpClientGet(), logger: logger);
   await repo.loadCurrentUser();
@@ -27,7 +27,12 @@ final class UserApiRepository {
   }
 }
 
-final class Logger {
+abstract interface class Logger {
+  Future<void> log({required String key, required Map<String, dynamic> value});
+}
+
+final class ConsoleLoggerAdapter implements Logger {
+  @override
   Future<void> log(
       {required String key, required Map<String, dynamic> value}) async {
     print(key);
