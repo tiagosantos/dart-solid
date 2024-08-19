@@ -4,10 +4,11 @@ import 'package:dio/dio.dart';
 import 'package:http/http.dart';
 
 main() async {
-  final httpClient = DioAdapter();
-  final repo = UserApiRepository(httpClient: httpClient);
+  final repo = UserApiRepository(httpClient: makeHttpClientGet());
   await repo.loadCurrentUser();
 }
+
+HttpGetClient makeHttpClientGet() => DioAdapter();
 
 final class UserApiRepository {
   final HttpGetClient httpClient;
