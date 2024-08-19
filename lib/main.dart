@@ -19,7 +19,15 @@ final class UserApiRepository {
 
   Future<void> loadCurrentUser() async {
     final json = await httpClient.get(url: "http://localhost:4000/users");
-    print(json);
+    Logger().log(key: 'loadCurrentUser', value: json);
+  }
+}
+
+final class Logger {
+  Future<void> log(
+      {required String key, required Map<String, dynamic> value}) async {
+    print(key);
+    print(value);
   }
 }
 
